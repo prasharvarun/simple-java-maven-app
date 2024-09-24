@@ -1,17 +1,23 @@
 pipeline {
     agent any
+
+    tools {
+        maven 'Maven 3.9.9' // This should match the name you configured in the Jenkins tool configuration
+    }
+    
     stages {
         stage('Build') {
             steps {
-                def mvnHome = mvn: '3.9.9', type: 'maven'
-                sh "${mvnHome}/bin/mvn -version"
-                sh 'mvn -version'
-                sh 'mvn -B -DskipTests clean package'
+                script {
+                    mvnHome = tool 'Maven 3.9.9'
+                }                
+                sh '${mvnHome}/bin/mvn -version'
+                sh '${mvnHome}/bin/mvn -B -DskipTests clean package'
             }
         }
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh '${mvnHome}/bin/mvn test'
             }
             post {
                 always {
